@@ -1,0 +1,7 @@
+grants:
+  - privilege: SELECT
+    on: TABLE ANALYTICS.PUBLIC.ORDERS
+    to_role: REPORTER
+  - privilege: USAGE
+    on: WAREHOUSE LOAD_WH
+    to_role: LOADER
