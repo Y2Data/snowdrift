@@ -5,3 +5,6 @@ grants:
   - privilege: USAGE
     on: WAREHOUSE LOAD_WH
     to_role: LOADER
+  - privilege: SELECT
+    on: FUTURE TABLES IN SCHEMA ANALYTICS.PUBLIC
+    to_role: REPORTER

@@ -23,20 +23,25 @@ grants:
   - privilege: USAGE
     on: WAREHOUSE LOAD_WH
     to_role: LOADER
+  - privilege: SELECT
+    on: FUTURE TABLES IN SCHEMA ANALYTICS.PUBLIC
+    to_role: REPORTER
+  - privilege: USAGE
+    on: FUTURE SCHEMAS IN DATABASE ANALYTICS
+    to_role: LOADER
 ```
 
-Objects must be fully qualified. `on:` mirrors Snowflake's `GRANT ... ON <object>` syntax.
+Objects must be fully qualified. `on:` mirrors Snowflake's `GRANT ... ON <object>` syntax. Future grants use `FUTURE <OBJECT_TYPE>S IN SCHEMA <db>.<schema>` or `FUTURE <OBJECT_TYPE>S IN DATABASE <db>`.
 
-## v0 scope
+## Coverage
 
-- Reads YAML grant spec.
-- Connects to Snowflake.
-- Diffs declared vs actual using `SHOW GRANTS TO ROLE`.
-- Prints missing and extra grants.
+- `SHOW GRANTS TO ROLE` — object grants held by each declared role.
+- `SHOW FUTURE GRANTS IN SCHEMA|DATABASE` — future grants in the schemas/databases mentioned in declared future grants (no blind-scan).
+- Declared − actual = MISSING. Actual − declared = EXTRA. Non-zero exit on drift.
 
-Known coverage gaps (deliberate, v0): future grants, role-to-role grants, masking/row-access policies, application roles. The whole point of this tool is acknowledging managed-grant blindness — coverage expands as drift surfaces in practice.
+Known coverage gaps: role-to-role / role hierarchy, masking policies, row-access policies, application roles. The whole point of this tool is acknowledging managed-grant blindness — coverage expands as drift surfaces in practice.
 
-Out of scope for v0: auto-remediation, Terraform state ingestion, naming-convention checks, web UI.
+Out of scope: auto-remediation (snowdrift never `GRANT`s or `REVOKE`s — fixes belong in your IaC), Terraform state ingestion, naming-convention checks, web UI.
 
 ## Dev
 
